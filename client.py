@@ -1,6 +1,6 @@
 import socket
 import threading
-import tkinter
+from tkinter import *
 import tkinter.scrolledtext
 from tkinter import simpledialog
 from network import *
@@ -14,6 +14,7 @@ class Client:
         app=tkinter.Tk()
         app.withdraw()
 
+
         self.nick = simpledialog.askstring("NICK","Choose your nickname",parent = app)
         self.gui_done = False
         self.running = True
@@ -26,28 +27,31 @@ class Client:
     #Настройки окна
     def gui_loop(self):
         self.window = tkinter.Tk()
-        self.window.configure(bg = 'blue')
+        self.window.configure(width=470, height=550,bg = '#B0C4DE')
 
-        self.chat_label=tkinter.Label(self.window,text = "Chat",bg = 'red')
-        self.chat_label.config(font=("Arial",12))
+        self.chat_label=tkinter.Label(self.window,text = "CHAT",bg = '#778899')
+        self.chat_label.config(font=("Arial",15))
         self.chat_label.pack(padx=20,pady=5)
 
-        self.text_area=tkinter.scrolledtext.ScrolledText(self.window)
+        self.text_area=tkinter.scrolledtext.ScrolledText(self.window,bg='#778899',fg='#FFE4E1')
         self.text_area.pack(padx=20,pady=5)
         self.text_area.config(state='disabled')
 
-        self.message_label=tkinter.Label(self.window,text='Message',bg='red')
+        self.message_label=tkinter.Label(self.window,text='Write message',bg='#778899')
+        self.message_label.config(font=("Arial",15))
         self.message_label.pack(padx=20,pady=5)
 
-        self.input_area=tkinter.Text(self.window,height=3)
+        self.scrollbar = Scrollbar(self.text_area)
+        self.scrollbar.configure(command=self.text_area.yview)
+
+        self.input_area=tkinter.Text(self.window,height=3,bg='#778899',fg='#FFE4E1')
         self.input_area.pack(padx=20,pady=5)
 
-        self.send_button=tkinter.Button(self.window,text='send',command = self.write)
+        self.send_button=tkinter.Button(self.window,text='send',command = self.write,height=2,bg='#778899')
         self.send_button.config(font=('Arial',12))
         self.send_button.pack(padx=20,pady=5)
         self.gui_done=True
 
-        self.window.protocol("delete window",self.stop)
 
         self.window.mainloop()
 
@@ -68,7 +72,7 @@ class Client:
        while self.running:
            try:
                message = self.socket.recv(1024)
-               if message == 'NICK':
+               if message == "NICK":
                    self.socket.send(self.nick.encode('utf-8'))
                else:
                    if self.gui_done:
